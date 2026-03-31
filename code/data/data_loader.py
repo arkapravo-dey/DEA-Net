@@ -6,15 +6,7 @@ from torchvision.transforms import ToTensor, RandomCrop
 
 
 def get_clear_name(hazy_name):
-    if hazy_name.startswith(('thin_', 'moderate_', 'thick_')):
-        base = hazy_name.split('_', 1)[1]
-    else:
-        base = hazy_name
-
-    name = os.path.splitext(base)[0]
-    name = str(int(name))
-
-    return name + ".png"
+    return hazy_name
 
 class TrainDataset(data.Dataset):
     def __init__(self, hazy_path, clear_path):
@@ -25,7 +17,7 @@ class TrainDataset(data.Dataset):
 
     def __getitem__(self, index):
         hazy_image_name = self.hazy_image_list[index]
-        clear_image_name = get_clear_name(hazy_image_name)
+        clear_image_name = hazy_image_name
 
         hazy_image_path = os.path.join(self.hazy_path, hazy_image_name)
         clear_image_path = os.path.join(self.clear_path, clear_image_name)
@@ -62,7 +54,7 @@ class TestDataset(data.Dataset):
 
     def __getitem__(self, index):
         hazy_image_name = self.hazy_image_list[index]
-        clear_image_name = get_clear_name(hazy_image_name)
+        clear_image_name = hazy_image_name
 
         hazy_image_path = os.path.join(self.hazy_path, hazy_image_name)
         clear_image_path = os.path.join(self.clear_path, clear_image_name)
@@ -89,7 +81,7 @@ class ValDataset(data.Dataset):
 
     def __getitem__(self, index):
         hazy_image_name = self.hazy_image_list[index]
-        clear_image_name = get_clear_name(hazy_image_name)
+        clear_image_name = hazy_image_name
 
         hazy_image_path = os.path.join(self.hazy_path, hazy_image_name)
         clear_image_path = os.path.join(self.clear_path, clear_image_name)
