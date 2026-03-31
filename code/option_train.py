@@ -54,8 +54,7 @@ if not os.path.exists(model_dir):
     os.mkdir(opt.saved_plot_dir)
     os.mkdir(opt.saved_infer_dir)
 else:
-    print(f'{model_dir} has already existed!')
-    exit()
+    print(f'{model_dir} exists → continuing training...')
 
 print(opt)
 print('model_dir:', model_dir)
