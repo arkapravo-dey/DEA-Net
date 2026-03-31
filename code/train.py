@@ -178,7 +178,7 @@ if __name__ == "__main__":
     train_set = TrainDataset(os.path.join(train_dir, 'hazy'), os.path.join(train_dir, 'clear'))
     test_dir = '../dataset/RESIDE/ITS/test'
     test_set = TestDataset(os.path.join(test_dir, 'hazy'), os.path.join(test_dir, 'clear'))
-    loader_train = DataLoader(dataset=train_set, batch_size=16, shuffle=True, num_workers=12)
+    loader_train = DataLoader(dataset=train_set, batch_size=16, shuffle=True, num_workers=4)
     loader_test = DataLoader(dataset=test_set, batch_size=1, shuffle=False, num_workers=4)
 
     net = DEANet(base_dim=32)
@@ -187,7 +187,7 @@ if __name__ == "__main__":
     epoch_size = len(loader_train)
     print("epoch_size: ", epoch_size)
     if opt.device == 'cuda':
-        net = torch.nn.DataParallel(net)
+        net = net.cuda()
         cudnn.benchmark = True
 
     pytorch_total_params = sum(p.numel() for p in net.parameters() if p.requires_grad)
