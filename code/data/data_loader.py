@@ -7,14 +7,14 @@ from torchvision.transforms import ToTensor, RandomCrop
 
 def get_clear_name(hazy_name):
     if hazy_name.startswith(('thin_', 'moderate_', 'thick_')):
-        return hazy_name.split('_', 1)[1]   # remove prefix only
-    
-    elif '_' in hazy_name:
-        return hazy_name.split('_')[0] + '.png'
-    
+        base = hazy_name.split('_', 1)[1]
     else:
-        return hazy_name
+        base = hazy_name
 
+    name = os.path.splitext(base)[0]
+    name = str(int(name))
+
+    return name + ".png"
 
 class TrainDataset(data.Dataset):
     def __init__(self, hazy_path, clear_path):
