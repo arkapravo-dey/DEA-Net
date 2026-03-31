@@ -6,8 +6,12 @@ from torchvision.transforms import ToTensor, RandomCrop
 
 
 def get_clear_name(hazy_name):
-    if '_' in hazy_name:
+    if hazy_name.startswith(('thin_', 'moderate_', 'thick_')):
+        return hazy_name.split('_', 1)[1]   # remove prefix only
+    
+    elif '_' in hazy_name:
         return hazy_name.split('_')[0] + '.png'
+    
     else:
         return hazy_name
 
