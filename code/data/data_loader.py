@@ -2,7 +2,14 @@ import os, random
 import torch.utils.data as data
 from PIL import Image
 from torchvision.transforms.functional import hflip, rotate, crop
-from torchvision.transforms import ToTensor, RandomCrop, Resize
+from torchvision.transforms import ToTensor, RandomCrop
+
+
+def get_clear_name(hazy_name):
+    if '_' in hazy_name:
+        return hazy_name.split('_')[0] + '.png'
+    else:
+        return hazy_name
 
 
 class TrainDataset(data.Dataset):
@@ -10,12 +17,11 @@ class TrainDataset(data.Dataset):
         super(TrainDataset, self).__init__()
         self.hazy_path = hazy_path
         self.clear_path = clear_path
-        self.hazy_image_list = os.listdir(hazy_path)
-        self.clear_image_list = os.listdir(clear_path)
+        self.hazy_image_list = sorted(os.listdir(hazy_path))
 
     def __getitem__(self, index):
         hazy_image_name = self.hazy_image_list[index]
-        clear_image_name = hazy_image_name.split('_')[0] + '.png'
+        clear_image_name = get_clear_name(hazy_image_name)
 
         hazy_image_path = os.path.join(self.hazy_path, hazy_image_name)
         clear_image_path = os.path.join(self.clear_path, clear_image_name)
@@ -23,17 +29,17 @@ class TrainDataset(data.Dataset):
         hazy = Image.open(hazy_image_path).convert('RGB')
         clear = Image.open(clear_image_path).convert('RGB')
 
+        # random crop
         crop_params = RandomCrop.get_params(hazy, [256, 256])
-        rotate_params = random.randint(0, 3) * 90
-
         hazy = crop(hazy, *crop_params)
         clear = crop(clear, *crop_params)
 
+        # random rotation
+        rotate_params = random.randint(0, 3) * 90
         hazy = rotate(hazy, rotate_params)
         clear = rotate(clear, rotate_params)
 
         to_tensor = ToTensor()
-
         hazy = to_tensor(hazy)
         clear = to_tensor(clear)
 
@@ -48,16 +54,11 @@ class TestDataset(data.Dataset):
         super(TestDataset, self).__init__()
         self.hazy_path = hazy_path
         self.clear_path = clear_path
-        self.hazy_image_list = os.listdir(hazy_path)
-        self.clear_image_list = os.listdir(clear_path)
-        self.hazy_image_list.sort()
-        self.clear_image_list.sort()
+        self.hazy_image_list = sorted(os.listdir(hazy_path))
 
     def __getitem__(self, index):
-        # data shape: C*H*W
-
         hazy_image_name = self.hazy_image_list[index]
-        clear_image_name = hazy_image_name.split('_')[0] + '.png'
+        clear_image_name = get_clear_name(hazy_image_name)
 
         hazy_image_path = os.path.join(self.hazy_path, hazy_image_name)
         clear_image_path = os.path.join(self.clear_path, clear_image_name)
@@ -66,7 +67,6 @@ class TestDataset(data.Dataset):
         clear = Image.open(clear_image_path).convert('RGB')
 
         to_tensor = ToTensor()
-
         hazy = to_tensor(hazy)
         clear = to_tensor(clear)
 
@@ -81,14 +81,11 @@ class ValDataset(data.Dataset):
         super(ValDataset, self).__init__()
         self.hazy_path = hazy_path
         self.clear_path = clear_path
-        self.hazy_image_list = os.listdir(hazy_path)
-        self.clear_image_list = os.listdir(clear_path)
-        self.hazy_image_list.sort()
-        self.clear_image_list.sort()
+        self.hazy_image_list = sorted(os.listdir(hazy_path))
 
     def __getitem__(self, index):
         hazy_image_name = self.hazy_image_list[index]
-        clear_image_name = hazy_image_name.split('_')[0] + '.png'
+        clear_image_name = get_clear_name(hazy_image_name)
 
         hazy_image_path = os.path.join(self.hazy_path, hazy_image_name)
         clear_image_path = os.path.join(self.clear_path, clear_image_name)
@@ -97,7 +94,6 @@ class ValDataset(data.Dataset):
         clear = Image.open(clear_image_path).convert('RGB')
 
         to_tensor = ToTensor()
-
         hazy = to_tensor(hazy)
         clear = to_tensor(clear)
 
